@@ -40,13 +40,11 @@ printint(int fd, int xx, int base, int sgn)
 
 // Print to the given fd. Only understands %d, %x, %p, %s.
 void
-printf(int fd, const char *fmt, ...)
+vprintf(int fd, const char *fmt, va_list ap)
 {
-  va_list ap;
   char *s;
   int c, i, state;
 
-  va_start(ap, fmt);
   state = 0;
   for(i = 0; fmt[i]; i++){
     c = fmt[i] & 0xff;
@@ -81,4 +79,22 @@ printf(int fd, const char *fmt, ...)
       state = 0;
     }
   }
+}
+
+void
+fprintf(int fd, const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start(ap, fmt);
+  vprintf(fd, fmt, ap);
+}
+
+void
+printf(const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start(ap, fmt);
+  vprintf(1, fmt, ap);
 }
