@@ -3,7 +3,7 @@ K=kernel
 U=user
 T=tools
 
-INCS = \
+HDRS = \
 	$K/asm.h\
 	$K/buf.h\
 	$K/date.h\
@@ -120,6 +120,13 @@ CFLAGS += -fno-pie -nopie
 endif
 
 all: xv6.img fs.img
+
+# Ensure that any header changes cause all sources to be recompiled.
+%.o: %.c $(HDRS)
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+%.o: %.S $(HDRS)
+	$(CC) -c $(ASFLAGS) -o $@ $<
 
 xv6.img: $B/bootblock $K/kernel
 	dd if=/dev/zero of=xv6.img count=10000
