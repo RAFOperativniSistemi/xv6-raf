@@ -164,7 +164,7 @@ $K/kernel: $(OBJS) $K/entry.o $K/entryother $U/initcode $K/kernel.ld
 # exploring disk buffering implementations, but it is
 # great for testing the kernel on real hardware without
 # needing a scratch disk.
-MEMFSOBJS = $(filter-out ide.o,$(OBJS)) $K/memide.o
+MEMFSOBJS = $(filter-out $K/ide.o,$(OBJS)) $K/memide.o
 $K/kernelmemfs: $(MEMFSOBJS) $K/entry.o $K/entryother $U/initcode $K/kernel.ld fs.img
 	$(LD) $(LDFLAGS) -T $K/kernel.ld -o $K/kernelmemfs $K/entry.o  $(MEMFSOBJS) -b binary $U/initcode $K/entryother fs.img
 
