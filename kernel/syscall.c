@@ -17,12 +17,12 @@
 int
 fetchint(uint addr, int *ip)
 {
-  struct proc *curproc = myproc();
+	struct proc *curproc = myproc();
 
-  if(addr >= curproc->sz || addr+4 > curproc->sz)
-    return -1;
-  *ip = *(int*)(addr);
-  return 0;
+	if(addr >= curproc->sz || addr+4 > curproc->sz)
+		return -1;
+	*ip = *(int*)(addr);
+	return 0;
 }
 
 // Fetch the nul-terminated string at addr from the current process.
@@ -31,25 +31,25 @@ fetchint(uint addr, int *ip)
 int
 fetchstr(uint addr, char **pp)
 {
-  char *s, *ep;
-  struct proc *curproc = myproc();
+	char *s, *ep;
+	struct proc *curproc = myproc();
 
-  if(addr >= curproc->sz)
-    return -1;
-  *pp = (char*)addr;
-  ep = (char*)curproc->sz;
-  for(s = *pp; s < ep; s++){
-    if(*s == 0)
-      return s - *pp;
-  }
-  return -1;
+	if(addr >= curproc->sz)
+		return -1;
+	*pp = (char*)addr;
+	ep = (char*)curproc->sz;
+	for(s = *pp; s < ep; s++){
+		if(*s == 0)
+			return s - *pp;
+	}
+	return -1;
 }
 
 // Fetch the nth 32-bit system call argument.
 int
 argint(int n, int *ip)
 {
-  return fetchint((myproc()->tf->esp) + 4 + 4*n, ip);
+	return fetchint((myproc()->tf->esp) + 4 + 4*n, ip);
 }
 
 // Fetch the nth word-sized system call argument as a pointer
@@ -58,15 +58,15 @@ argint(int n, int *ip)
 int
 argptr(int n, char **pp, int size)
 {
-  int i;
-  struct proc *curproc = myproc();
- 
-  if(argint(n, &i) < 0)
-    return -1;
-  if(size < 0 || (uint)i >= curproc->sz || (uint)i+size > curproc->sz)
-    return -1;
-  *pp = (char*)i;
-  return 0;
+	int i;
+	struct proc *curproc = myproc();
+
+	if(argint(n, &i) < 0)
+		return -1;
+	if(size < 0 || (uint)i >= curproc->sz || (uint)i+size > curproc->sz)
+		return -1;
+	*pp = (char*)i;
+	return 0;
 }
 
 // Fetch the nth word-sized system call argument as a string pointer.
@@ -76,10 +76,10 @@ argptr(int n, char **pp, int size)
 int
 argstr(int n, char **pp)
 {
-  int addr;
-  if(argint(n, &addr) < 0)
-    return -1;
-  return fetchstr(addr, pp);
+	int addr;
+	if(argint(n, &addr) < 0)
+		return -1;
+	return fetchstr(addr, pp);
 }
 
 extern int sys_chdir(void);
@@ -131,15 +131,15 @@ static int (*syscalls[])(void) = {
 void
 syscall(void)
 {
-  int num;
-  struct proc *curproc = myproc();
+	int num;
+	struct proc *curproc = myproc();
 
-  num = curproc->tf->eax;
-  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    curproc->tf->eax = syscalls[num]();
-  } else {
-    cprintf("%d %s: unknown sys call %d\n",
-            curproc->pid, curproc->name, num);
-    curproc->tf->eax = -1;
-  }
+	num = curproc->tf->eax;
+	if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+		curproc->tf->eax = syscalls[num]();
+	} else {
+		cprintf("%d %s: unknown sys call %d\n",
+						curproc->pid, curproc->name, num);
+		curproc->tf->eax = -1;
+	}
 }
