@@ -13,6 +13,8 @@
 
 #define MAXARGS 10
 
+#define BINPATHLEN 20
+
 struct cmd {
 	int type;
 };
@@ -58,6 +60,7 @@ void
 runcmd(struct cmd *cmd)
 {
 	int p[2];
+	char binpath[BINPATHLEN];
 	struct backcmd *bcmd;
 	struct execcmd *ecmd;
 	struct listcmd *lcmd;
@@ -75,8 +78,10 @@ runcmd(struct cmd *cmd)
 		ecmd = (struct execcmd*)cmd;
 		if(ecmd->argv[0] == 0)
 			exit();
-		exec(ecmd->argv[0], ecmd->argv);
-		fprintf(2, "exec %s failed\n", ecmd->argv[0]);
+		strcpy(binpath, "/bin/");
+		safestrcpy(binpath + 5, ecmd->argv[0], 14);
+		exec(binpath, ecmd->argv);
+		fprintf(2, "exec %s failed\n", binpath);
 		break;
 
 	case REDIR:
@@ -148,7 +153,7 @@ main(void)
 	int fd;
 
 	// Ensure that three file descriptors are open.
-	while((fd = open("console", O_RDWR)) >= 0){
+	while((fd = open("/dev/console", O_RDWR)) >= 0){
 		if(fd >= 3){
 			close(fd);
 			break;

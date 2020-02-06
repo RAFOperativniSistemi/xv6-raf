@@ -32,6 +32,10 @@ char zeroes[BSIZE];
 uint freeinode = 1;
 uint freeblock;
 
+uint rootino;
+uint homeino;
+uint binino;
+uint devino;
 
 void balloc(int);
 void wsect(uint, void*);
@@ -64,14 +68,88 @@ xint(uint x)
 	return y;
 }
 
+void
+makedirs(void)
+{
+	struct dirent de;
+
+	// /
+	rootino = ialloc(T_DIR);
+	assert(rootino == ROOTINO);
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(rootino);
+	strcpy(de.name, ".");
+	iappend(rootino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(rootino);
+	strcpy(de.name, "..");
+	iappend(rootino, &de, sizeof(de));
+
+	// /dev
+	devino = ialloc(T_DIR);
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(devino);
+	strcpy(de.name, ".");
+	iappend(devino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(rootino);
+	strcpy(de.name, "..");
+	iappend(devino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(devino);
+	strcpy(de.name, "dev");
+	iappend(rootino, &de, sizeof(de));
+
+	// /bin
+	binino = ialloc(T_DIR);
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(binino);
+	strcpy(de.name, ".");
+	iappend(binino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(rootino);
+	strcpy(de.name, "..");
+	iappend(binino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(binino);
+	strcpy(de.name, "bin");
+	iappend(rootino, &de, sizeof(de));
+
+	// /home
+	homeino = ialloc(T_DIR);
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(homeino);
+	strcpy(de.name, ".");
+	iappend(homeino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(rootino);
+	strcpy(de.name, "..");
+	iappend(homeino, &de, sizeof(de));
+
+	bzero(&de, sizeof(de));
+	de.inum = xshort(homeino);
+	strcpy(de.name, "home");
+	iappend(rootino, &de, sizeof(de));
+}
+
 int
 main(int argc, char *argv[])
 {
 	int i, cc, fd;
-	uint rootino, inum, off;
+	uint dirino, inum;
 	struct dirent de;
 	char buf[BSIZE];
-	struct dinode din;
+	char *shortname;
 
 	static_assert(sizeof(int) == 4, "Integers must be 4 bytes!");
 
@@ -113,22 +191,10 @@ main(int argc, char *argv[])
 	memmove(buf, &sb, sizeof(sb));
 	wsect(1, buf);
 
-	rootino = ialloc(T_DIR);
-	assert(rootino == ROOTINO);
-
-	bzero(&de, sizeof(de));
-	de.inum = xshort(rootino);
-	strcpy(de.name, ".");
-	iappend(rootino, &de, sizeof(de));
-
-	bzero(&de, sizeof(de));
-	de.inum = xshort(rootino);
-	strcpy(de.name, "..");
-	iappend(rootino, &de, sizeof(de));
+	makedirs();
 
 	for(i = 2; i < argc; i++){
 		// get rid of "user/"
-		char *shortname;
 		if(strncmp(argv[i], "user/", 5) == 0)
 			shortname = argv[i] + 5;
 		else
@@ -141,32 +207,31 @@ main(int argc, char *argv[])
 			exit(1);
 		}
 
+		dirino = homeino;
+
 		// Skip leading _ in name when writing to file system.
 		// The binaries are named _rm, _cat, etc. to keep the
 		// build operating system from trying to execute them
 		// in place of system binaries like rm and cat.
-		if(shortname[0] == '_')
+		if(shortname[0] == '_') {
 			shortname += 1;
+			// Binaries get copied into /bin, everything
+			// else goes into /home.
+			dirino = binino;
+		}
 
 		inum = ialloc(T_FILE);
 
 		bzero(&de, sizeof(de));
 		de.inum = xshort(inum);
 		strncpy(de.name, shortname, DIRSIZ);
-		iappend(rootino, &de, sizeof(de));
+		iappend(dirino, &de, sizeof(de));
 
 		while((cc = read(fd, buf, sizeof(buf))) > 0)
 			iappend(inum, buf, cc);
 
 		close(fd);
 	}
-
-	// fix size of root inode dir
-	rinode(rootino, &din);
-	off = xint(din.size);
-	off = ((off/BSIZE) + 1) * BSIZE;
-	din.size = xint(off);
-	winode(rootino, &din);
 
 	balloc(freeblock);
 

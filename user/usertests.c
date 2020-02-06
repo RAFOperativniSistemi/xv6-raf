@@ -120,7 +120,7 @@ opentest(void)
 	int fd;
 
 	printf("open test\n");
-	fd = open("echo", 0);
+	fd = open("/bin/echo", 0);
 	if(fd < 0){
 		printf("open echo failed!\n");
 		exit();
@@ -263,7 +263,8 @@ createtest(void)
 	printf("many creates, followed by unlink; ok\n");
 }
 
-void dirtest(void)
+void
+dirtest(void)
 {
 	printf("mkdir test\n");
 
@@ -293,7 +294,7 @@ void
 exectest(void)
 {
 	printf("exec test\n");
-	if(exec("echo", echoargv) < 0){
+	if(exec("/bin/echo", echoargv) < 0){
 		printf("exec echo failed\n");
 		exit();
 	}
@@ -873,7 +874,7 @@ linkunlink()
 		if((x % 3) == 0){
 			close(open("x", O_RDWR | O_CREATE));
 		} else if((x % 3) == 1){
-			link("cat", "x");
+			link("/bin/cat", "x");
 		} else {
 			unlink("x");
 		}
@@ -1622,7 +1623,7 @@ bigargtest(void)
 			args[i] = "bigargs test: failed\n                                                                                                                                                                                                       ";
 		args[MAXARG-1] = 0;
 		printf("bigarg test\n");
-		exec("echo", args);
+		exec("/bin/echo", args);
 		printf("bigarg test ok\n");
 		fd = open("bigarg-ok", O_CREATE);
 		close(fd);
@@ -1726,7 +1727,7 @@ uio()
 void argptest()
 {
 	int fd;
-	fd = open("init", O_RDONLY);
+	fd = open("/bin/init", O_RDONLY);
 	if (fd < 0) {
 		fprintf(2, "open failed\n");
 		exit();

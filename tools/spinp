@@ -8,7 +8,7 @@ fi
 rm -f $1.trail
 spin -a $1 || exit 1
 cc -DSAFETY -DREACH -DMEMLIM=500 -o pan pan.c
-pan -i
+./pan -i
 rm pan.* pan
 if [ -f $1.trail ]; then
 	spin -t -p $1
