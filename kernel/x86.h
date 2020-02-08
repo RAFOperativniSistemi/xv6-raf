@@ -13,9 +13,9 @@ static inline void
 insl(int port, void *addr, int cnt)
 {
 	asm volatile("cld; rep insl" :
-								"=D" (addr), "=c" (cnt) :
-								"d" (port), "0" (addr), "1" (cnt) :
-								"memory", "cc");
+		     "=D" (addr), "=c" (cnt) :
+		     "d" (port), "0" (addr), "1" (cnt) :
+		     "memory", "cc");
 }
 
 static inline void
@@ -34,27 +34,27 @@ static inline void
 outsl(int port, const void *addr, int cnt)
 {
 	asm volatile("cld; rep outsl" :
-								"=S" (addr), "=c" (cnt) :
-								"d" (port), "0" (addr), "1" (cnt) :
-								"cc");
+		     "=S" (addr), "=c" (cnt) :
+		     "d" (port), "0" (addr), "1" (cnt) :
+		     "cc");
 }
 
 static inline void
 stosb(void *addr, int data, int cnt)
 {
 	asm volatile("cld; rep stosb" :
-								"=D" (addr), "=c" (cnt) :
-								"0" (addr), "1" (cnt), "a" (data) :
-								"memory", "cc");
+		     "=D" (addr), "=c" (cnt) :
+		     "0" (addr), "1" (cnt), "a" (data) :
+		     "memory", "cc");
 }
 
 static inline void
 stosl(void *addr, int data, int cnt)
 {
 	asm volatile("cld; rep stosl" :
-								"=D" (addr), "=c" (cnt) :
-								"0" (addr), "1" (cnt), "a" (data) :
-								"memory", "cc");
+		     "=D" (addr), "=c" (cnt) :
+		     "0" (addr), "1" (cnt), "a" (data) :
+		     "memory", "cc");
 }
 
 static inline void
@@ -120,9 +120,9 @@ xchg(volatile uint *addr, uint newval)
 
 	// The + in "+m" denotes a read-modify-write operand.
 	asm volatile("lock; xchgl %0, %1" :
-								"+m" (*addr), "=a" (result) :
-								"1" (newval) :
-								"cc");
+		     "+m" (*addr), "=a" (result) :
+		     "1" (newval) :
+		     "cc");
 	return result;
 }
 

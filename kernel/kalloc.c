@@ -11,7 +11,7 @@
 
 void freerange(void *vstart, void *vend);
 extern char end[]; // first address after kernel loaded from ELF file
-										// defined by the kernel linker script in kernel.ld
+		   // defined by the kernel linker script in kernel.ld
 
 struct run {
 	struct run *next;

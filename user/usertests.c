@@ -227,7 +227,7 @@ writetest1(void)
 		}
 		if(((int*)buf)[0] != n){
 			printf("read content of block %d is %d\n",
-							n, ((int*)buf)[0]);
+				n, ((int*)buf)[0]);
 			exit();
 		}
 		n++;
@@ -1551,12 +1551,12 @@ validateint(int *p)
 {
 	int res;
 	asm("mov %%esp, %%ebx\n\t"
-			"mov %3, %%esp\n\t"
-			"int %2\n\t"
-			"mov %%ebx, %%esp" :
-			"=a" (res) :
-			"a" (SYS_sleep), "n" (T_SYSCALL), "c" (p) :
-			"ebx");
+	    "mov %3, %%esp\n\t"
+	    "int %2\n\t"
+	    "mov %%ebx, %%esp" :
+	    "=a" (res) :
+	    "a" (SYS_sleep), "n" (T_SYSCALL), "c" (p) :
+	    "ebx");
 }
 
 void

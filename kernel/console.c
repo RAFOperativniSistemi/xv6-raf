@@ -200,7 +200,7 @@ consoleintr(int (*getc)(void))
 			break;
 		case C('U'):  // Kill line.
 			while(input.e != input.w &&
-						input.buf[(input.e-1) % INPUT_BUF] != '\n'){
+			      input.buf[(input.e-1) % INPUT_BUF] != '\n'){
 				input.e--;
 				consputc(BACKSPACE);
 			}
