@@ -165,8 +165,8 @@ switchuvm(struct proc *p)
 
 	pushcli();
 	mycpu()->gdt[SEG_TSS] = SEG16(STS_T32A, &mycpu()->ts,
-																sizeof(mycpu()->ts)-1, 0);
-	mycpu()->gdt[SEG_TSS].s = 0;
+		sizeof(mycpu()->ts)-1, 0);
+	SEG_CLS(mycpu()->gdt[SEG_TSS]);
 	mycpu()->ts.ss0 = SEG_KDATA << 3;
 	mycpu()->ts.esp0 = (uint)p->kstack + KSTACKSIZE;
 	// setting IOPL=0 in eflags *and* iomb beyond the tss segment limit
