@@ -38,7 +38,7 @@ multiboot_header:
 # Since we haven't set up virtual memory yet, our entry point is
 # the physical address of 'entry'.
 .globl _start
-_start = V2P_WO(entry)
+_start = entry
 
 # Entering xv6 on boot processor, with paging off.
 .globl entry
@@ -58,11 +58,36 @@ entry:
 	# Set up the stack pointer.
 	movl $(stack + KSTACKSIZE), %esp
 
+	# Reload a known gdt, in case we booted from GRUB.
+	call    reloadgdt
+	ljmp    $(SEG_KCODE<<3), $V2P_WO(1f)
+
+1:
 	# Jump to main(), and switch to executing at
 	# high addresses. The indirect call is needed because
 	# the assembler produces a PC-relative instruction
 	# for a direct jump.
 	mov $main, %eax
 	jmp *%eax
+
+	# If main returns, loop forever.
+	jmp .
+
+reloadgdt:
+	subl $8, %esp
+	movl $V2P_WO(bootgdt), 4(%esp)
+	movw $(8*NSEGS-1), 2(%esp)
+	lgdt 2(%esp)
+	addl $8, %esp
+
+	movl $(SEG_KDATA<<3), %eax  // data segment selector
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %ss
+	movl $0, %eax  // null segment selector
+	movw %ax, %fs
+	movw %ax, %gs
+
+	ret
 
 .comm stack, KSTACKSIZE

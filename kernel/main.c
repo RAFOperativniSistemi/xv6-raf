@@ -106,3 +106,12 @@ pde_t entrypgdir[NPDENTRIES] = {
 	// Map VA's [KERNBASE, KERNBASE+4MB) to PA's [0, 4MB)
 	[KERNBASE>>PDXSHIFT] = (0) | PTE_P | PTE_W | PTE_PS,
 };
+
+// Boot GDT
+segdesc bootgdt[NSEGS] = {
+       0,
+       SEG(STA_X|STA_R, 0, 0xffffffff, 0),
+       SEG(STA_W, 0, 0xffffffff, 0),
+       SEG(STA_X|STA_R, 0, 0xffffffff, DPL_USER),
+       SEG(STA_W, 0, 0xffffffff, DPL_USER),
+};
