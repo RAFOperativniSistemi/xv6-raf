@@ -12,6 +12,11 @@ main(void)
 {
 	int pid, wpid;
 
+	if(getpid() != 1){
+		fprintf(2, "init: already running\n");
+		exit();
+	}
+
 	if(open("/dev/console", O_RDWR) < 0){
 		mknod("/dev/console", 1, 1);
 		open("/dev/console", O_RDWR);
