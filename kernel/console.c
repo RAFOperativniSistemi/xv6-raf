@@ -236,6 +236,10 @@ consoleread(struct inode *ip, char *dst, int n)
 	uint target;
 	int c;
 
+	// XXX: Ukloniti ovaj deo.
+	if (ip->minor != 1)
+		return 0;
+
 	iunlock(ip);
 	target = n;
 	acquire(&cons.lock);
@@ -272,6 +276,10 @@ int
 consolewrite(struct inode *ip, char *buf, int n)
 {
 	int i;
+
+	// XXX: Ukloniti ovaj deo.
+	if (ip->minor != 1)
+		return n;
 
 	iunlock(ip);
 	acquire(&cons.lock);
