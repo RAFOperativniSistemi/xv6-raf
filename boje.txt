@@ -1,0 +1,4 @@
+This is [31mred[0m.
+This is [32mgreen[0m.
+This is [34mblue[0m.
+[33;42mThe [36;41mmore [32;46myou [31;43mknow[35;44m...[0m
