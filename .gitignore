@@ -10,8 +10,8 @@ bootblock
 entryother
 initcode
 initcode.out
-kernel
-kernelmemfs
+kernel/kernel
+kernel/kernelmemfs
 mkfs
 .gdbinit
 TAGS
