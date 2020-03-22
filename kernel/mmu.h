@@ -24,34 +24,34 @@
 #ifndef __ASSEMBLER__
 
 // Set up a segment descriptor
-#define SEG(type, base, lim, dpl) (			\
-	(((uint64)(uint)(lim) >> 12) & 0xffff)		\
-	| ((uint64)(uint)(base) & 0xffff) << 16		\
-	| (((uint64)(uint)(base) >> 16) & 0xff) << 32 	\
-	| ((uint64)(type)) << 40			\
-	| 1ULL << 44					\
-	| (uint64)(dpl) << 45				\
-	| 1ULL << 47					\
-	| ((uint64)(uint)(lim) >> 28) << 48		\
-	/* skip 2 zeroes */				\
-	| 1ULL << 54					\
-	| 1ULL << 55					\
-	| (((uint64)(uint)(base)) >> 24) << 56		\
+#define SEG(type, base, lim, dpl) (                     \
+	(((uint64)(uint)(lim) >> 12) & 0xffff)          \
+	| ((uint64)(uint)(base) & 0xffff) << 16         \
+	| (((uint64)(uint)(base) >> 16) & 0xff) << 32   \
+	| ((uint64)(type)) << 40                        \
+	| 1ULL << 44                                    \
+	| (uint64)(dpl) << 45                           \
+	| 1ULL << 47                                    \
+	| ((uint64)(uint)(lim) >> 28) << 48             \
+	/* skip 2 zeroes */                             \
+	| 1ULL << 54                                    \
+	| 1ULL << 55                                    \
+	| (((uint64)(uint)(base)) >> 24) << 56          \
 )
 
-#define SEG16(type, base, lim, dpl) (			\
-	((uint64)(uint)(lim) & 0xffff)			\
-	| ((uint64)(uint)(base) & 0xffff) << 16		\
-	| (((uint64)(uint)(base) >> 16) & 0xff) << 32 	\
-	| ((uint64)(type)) << 40			\
-	| 1ULL << 44					\
-	| (uint64)(dpl) << 45				\
-	| 1ULL << 47					\
-	| ((uint64)(uint)(lim) >> 16) << 48		\
-	/* skip 2 zeroes */				\
-	| 1ULL << 54					\
-	/* skip 1 zero */				\
-	| (((uint64)(uint)(base)) >> 24) << 56		\
+#define SEG16(type, base, lim, dpl) (                   \
+	((uint64)(uint)(lim) & 0xffff)                  \
+	| ((uint64)(uint)(base) & 0xffff) << 16         \
+	| (((uint64)(uint)(base) >> 16) & 0xff) << 32   \
+	| ((uint64)(type)) << 40                        \
+	| 1ULL << 44                                    \
+	| (uint64)(dpl) << 45                           \
+	| 1ULL << 47                                    \
+	| ((uint64)(uint)(lim) >> 16) << 48             \
+	/* skip 2 zeroes */                             \
+	| 1ULL << 54                                    \
+	/* skip 1 zero */                               \
+	| (((uint64)(uint)(base)) >> 24) << 56          \
 )
 
 // Set system bit to 0.
@@ -159,15 +159,15 @@ struct taskstate {
 // - dpl: Descriptor Privilege Level -
 //        the privilege level required for software to invoke
 //        this interrupt/trap gate explicitly using an int instruction.
-#define SETGATE(gate, istrap, sel, off, d)				\
-{									\
-	(gate) = 0;							\
-	(gate) |= (uint)(off) & 0xffff;					\
-	(gate) |= ((sel) & 0xffff) << 16;				\
-	(gate) |= (uint64)((istrap) ? STS_TG32 : STS_IG32) << 40; 	\
-	(gate) |= (uint64)(d) << 45;					\
-	(gate) |= 1ULL << 47;						\
-	(gate) |= ((uint64)(off) >> 16) << 48;				\
+#define SETGATE(gate, istrap, sel, off, d)                        \
+{                                                                 \
+	(gate) = 0;                                               \
+	(gate) |= (uint)(off) & 0xffff;                           \
+	(gate) |= ((sel) & 0xffff) << 16;                         \
+	(gate) |= (uint64)((istrap) ? STS_TG32 : STS_IG32) << 40; \
+	(gate) |= (uint64)(d) << 45;                              \
+	(gate) |= 1ULL << 47;                                     \
+	(gate) |= ((uint64)(off) >> 16) << 48;                    \
 }
 
 #endif
