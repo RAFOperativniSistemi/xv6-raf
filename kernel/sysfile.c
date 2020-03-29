@@ -250,7 +250,7 @@ create(char *path, short type, short major, short minor)
 	if((ip = dirlookup(dp, name, 0)) != 0){
 		iunlockput(dp);
 		ilock(ip);
-		if(type == T_FILE && ip->type == T_FILE)
+		if((type == T_FILE && ip->type == T_FILE) || ip->type == T_DEV)
 			return ip;
 		iunlockput(ip);
 		return 0;
