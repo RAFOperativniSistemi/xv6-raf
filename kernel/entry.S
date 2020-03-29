@@ -35,8 +35,6 @@ multiboot_header:
 	.long (-magic-flags)
 
 # By convention, the _start symbol specifies the ELF entry point.
-# Since we haven't set up virtual memory yet, our entry point is
-# the physical address of 'entry'.
 .globl _start
 _start = entry
 
@@ -69,9 +67,6 @@ entry:
 	# for a direct jump.
 	mov $main, %eax
 	jmp *%eax
-
-	# If main returns, loop forever.
-	jmp .
 
 reloadgdt:
 	subl $8, %esp
