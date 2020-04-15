@@ -321,13 +321,21 @@ wait(void)
 void
 scheduler(void)
 {
+	int idle;
 	struct proc *p;
 	struct cpu *c = mycpu();
 	c->proc = 0;
 
+	idle = 0;
 	for(;;){
 		// Enable interrupts on this processor.
 		sti();
+
+		// If there are no processes to run, halt the CPU
+		// until the next interrupt.
+		if(idle)
+			hlt();
+		idle = 1;
 
 		// Loop over process table looking for process to run.
 		acquire(&ptable.lock);
@@ -335,6 +343,7 @@ scheduler(void)
 			if(p->state != RUNNABLE)
 				continue;
 
+			idle = 0;
 			// Switch to chosen process.  It is the process's job
 			// to release ptable.lock and then reacquire it
 			// before jumping back to us.
