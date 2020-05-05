@@ -160,6 +160,7 @@ filetest(void)
 		fail("open");
 
 	memset(buf, 'A', 128);
+	buf[127] = 0;
 
 	ret = write(fd, buf, 128);
 	if (ret != 128)
@@ -175,7 +176,7 @@ filetest(void)
 	if (((char*)addr)[200] != 0)
 		fail("padding zeroes");
 
-	memset(addr, 'B', 128);
+	memset(addr, 'B', 127);
 
 	ret = msync(addr, 0x1000);
 	if (ret < 0)
@@ -192,11 +193,11 @@ filetest(void)
 	if (fd < 0)
 		fail("open");
 
-	ret = read(fd, buf, 128);
+	ret = read(fd, buf, 127);
 	if (ret < 0)
 		fail("read");
 
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < 127; i++)
 		if (buf[i] != 'B')
 			fail("modified contents");
 
