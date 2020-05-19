@@ -202,6 +202,7 @@ filetest(void)
 			fail("modified contents");
 
 	close(fd);
+	unlink("/home/mapfile");
 
 	printf("filetest done.\n");
 }
@@ -235,6 +236,8 @@ _shmtest_write(int fd)
 	ret = munmap(addr, 0x2000);
 	if (ret < 0)
 		fail("munmap");
+
+	exit();
 }
 
 // Helper function that reads from a shared memory object
@@ -272,6 +275,8 @@ _shmtest_read(int fd)
 	ret = munmap(addr, 0x2000);
 	if (ret < 0)
 		fail("munmap");
+
+	exit();
 }
 
 // Test mapping shared memory segments.
